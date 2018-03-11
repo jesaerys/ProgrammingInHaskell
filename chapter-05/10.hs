@@ -104,11 +104,6 @@ testCharacterUtilities = and [
 
 -- String utilities ------------------------------------------------------------
 
--- | Get the positions of an element within a list of elements.
-positions :: Eq a => a -> [a] -> [Int]
-positions x xs = [i | (x', i) <- zip xs [0..], x' == x]
-
-
 -- | Count the number of lowercase characters in a string.
 lowers :: String -> Int
 lowers xs = length [x | x <- xs, isLower x]
@@ -121,7 +116,6 @@ count x xs = length [x' | x' <- xs, x' == x]
 
 testStringUtilities :: Bool
 testStringUtilities = and [
-  positions False [True, False, True, False] == [1, 3],
   lowers "Haskell" == 6,
   count 's' "Mississippi" == 4
   ]
@@ -151,6 +145,11 @@ testMathUtilities = and [
 
 -- List utilities --------------------------------------------------------------
 
+-- | Get the positions of an element within a list of elements.
+positions :: Eq a => a -> [a] -> [Int]
+positions x xs = [i | (x', i) <- zip xs [0..], x' == x]
+
+
 -- | Rotate elements to the left such that the head wraps to the end.
 rotate :: Int -> [a] -> [a]
 rotate n xs = drop n xs ++ take n xs
@@ -158,5 +157,6 @@ rotate n xs = drop n xs ++ take n xs
 
 testListUtilities :: Bool
 testListUtilities = and [
+  positions False [True, False, True, False] == [1, 3],
   rotate 3 [1..5] == [4, 5, 1, 2, 3]
   ]

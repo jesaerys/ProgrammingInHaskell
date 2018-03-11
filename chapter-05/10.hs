@@ -1,7 +1,7 @@
 module CaesarCipher where
 
 import Control.Exception (assert)
-import Data.Char (ord, chr, isLower)
+import Data.Char (ord, chr, isLower, isUpper, toLower, toUpper)
 
 
 -- | Decode a message that was encoded using the Caesar cipher.
@@ -11,10 +11,13 @@ import Data.Char (ord, chr, isLower)
 -- the message is short or when the message has an unusual character
 -- distribution.
 crack :: String -> String
-crack xs = encode (-factor) xs
-  where factor = head (positions (minimum chitab) chitab)
+crack xs = toUpperWhere upperMask cracked
+  where upperMask = [isUpper x | x <- xs]
+        cracked = encode (-factor) lowered
+        lowered = [toLower x | x <- xs]
+        factor = head (positions (minimum chitab) chitab)
         chitab = [chisqr (rotate n table') table | n <- [0..25]]
-        table' = freqs xs
+        table' = freqs lowered
 
 
 -- | Encode a string using the Caesar cipher.
@@ -47,8 +50,8 @@ table = [8.1, 1.5, 2.8, 4.2, 12.7, 2.2, 2.0, 6.1, 7.0, 0.2,
 
 testCaesarCipher :: Bool
 testCaesarCipher = and [
-  crack "kdvnhoo lv ixq" == "haskell is fun",
-  crack "vscd mywzboroxcsyxc kbo ecopev" == "list comprehensions are useful",
+  crack "Kdvnhoo Lv Ixq!" == "Haskell Is Fun!",
+  crack "Vscd Mywzboroxcsyxc kbo ECOPEV" == "List Comprehensions are USEFUL",
 
   encode 3 "haskell is fun" == "kdvnhoo lv ixq",
   encode (-3) "kdvnhoo lv ixq" == "haskell is fun",
@@ -114,10 +117,16 @@ count :: Char -> String -> Int
 count x xs = length [x' | x' <- xs, x' == x]
 
 
+-- | Uppercase characters where the mask is True.
+toUpperWhere :: [Bool] -> String -> String
+toUpperWhere mask xs = [if m then toUpper x else x | (m, x) <- zip mask xs]
+
+
 testStringUtilities :: Bool
 testStringUtilities = and [
   lowers "Haskell" == 6,
-  count 's' "Mississippi" == 4
+  count 's' "Mississippi" == 4,
+  toUpperWhere [False, True, False, True] "abcd" == "aBcD"
   ]
 
 

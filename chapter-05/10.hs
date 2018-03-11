@@ -4,7 +4,6 @@ import Control.Exception (assert)
 import Data.Char (ord, chr, isLower)
 
 
-
 -- | Decode a message that was encoded using the Caesar cipher.
 --
 -- This works by determining the cipher's shift parameter that leads to
@@ -65,14 +64,17 @@ testCaesarCipher = and [
   ]
 
 
+tests = [
+  testCaesarCipher,
+  testCharacterUtilities,
+  testStringUtilities,
+  testMathUtilities,
+  testListUtilities
+  ]
+
 test :: IO ()
 test = assert (and tests) putStrLn "OK"
-  where tests = [testCaesarCipher,
-                 testCharacterUtilities,
-                 testStringUtilities,
-                 testMathUtilities,
-                 testListUtilities
-                 ]
+
 
 
 -- Note: the remainder of this script contains functions that I'd rather

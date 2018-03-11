@@ -1,7 +1,7 @@
 module CaesarCipher where
 
 import Control.Exception (assert)
-import Data.Char (ord, chr, isLower, toLower)
+import Data.Char (ord, chr, isLower)
 
 
 

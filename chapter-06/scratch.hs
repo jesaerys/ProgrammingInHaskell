@@ -31,12 +31,12 @@ length' (_:xs) = 1 + length' xs
 
 
 reverse' :: [a] -> [a]
-reverse' [] = []
+reverse' []     = []
 reverse' (x:xs) = reverse' xs ++ [x]
 
 
 append :: [a] -> [a] -> [a]
-append [] ys = ys
+append [] ys     = ys
 append (x:xs) ys = x : (append xs ys)
 
 

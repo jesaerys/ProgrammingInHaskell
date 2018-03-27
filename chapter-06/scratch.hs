@@ -51,6 +51,18 @@ isort []     = []
 isort (x:xs) = insert x (isort xs)
 
 
+zip' :: [a] -> [b] -> [(a, b)]
+zip' []      _     = []
+zip' _      []     = []
+zip' (x:xs) (y:ys) = (x, y) : zip' xs ys
+
+
+drop' :: Int -> [a] -> [a]
+drop' 0 xs     = xs
+drop' _ []     = []
+drop' n (_:xs) = drop' (n - 1) xs
+
+
 tests = [
   fac 10 == 3628800,
   fac' 10 == 3628800,
@@ -68,7 +80,14 @@ tests = [
 
   insert 3 [1, 2, 3, 4, 5] == [1, 2, 3, 3, 4, 5],
 
-  isort [4, 1, 3, 5, 2] == [1, 2, 3, 4, 5]
+  isort [4, 1, 3, 5, 2] == [1, 2, 3, 4, 5],
+
+  zip' "abc" [1, 2, 3] == [('a', 1), ('b', 2), ('c', 3)],
+  zip' "ab" [1, 2, 3] == [('a', 1), ('b', 2)],
+  zip' "abc" [1, 2] == [('a', 1), ('b', 2)],
+
+  drop' 3 [1, 2, 3, 4, 5] == [4, 5],
+  drop' 10 [1, 2, 3, 4, 5] == []
   ]
 
 main :: IO ()

@@ -117,6 +117,31 @@ elem' x' (x:xs) | x' == x    = True
 
 
 
+-- 7)
+{- Both lists are already sorted, so if x is less than y, then x must be less
+than all other values in ys (and similarly for y with respect to xs). -}
+merge :: Ord a => [a] -> [a] -> [a]
+merge []     ys                  = ys
+merge xs     []                  = xs
+merge (x:xs) (y:ys) | x <= y     = x : merge xs (y:ys)
+                    | otherwise  = y : merge (x:xs) ys
+
+
+
+-- 8)
+halve :: [a] -> ([a], [a])
+halve xs = (take n xs, drop n xs)
+  where n = (length xs) `div` 2
+
+
+msort :: Ord a => [a] -> [a]
+msort []  = []
+msort [x] = [x]
+msort xs  = merge (msort xs1) (msort xs2)
+  where (xs1, xs2) = halve xs
+
+
+
 tests = [
   fac 10 == 3628800,
 
@@ -138,6 +163,12 @@ tests = [
 
   elem' 3 [1..5] == True,
   elem' 9 [1..5] == False,
+
+  merge [2, 5, 6] [1, 3, 4] == [1..6],
+
+  halve [1..5] == ([1, 2], [3..5]),
+
+  msort [4, 1, 3, 5, 2] == [1..5]
   ]
 
 main :: IO ()

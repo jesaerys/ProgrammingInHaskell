@@ -63,6 +63,44 @@ drop' _ []     = []
 drop' n (_:xs) = drop' (n - 1) xs
 
 
+fib :: Int -> Int
+fib 0 = 0
+fib 1 = 1
+fib n = fib (n - 2) + fib (n - 1)
+
+
+qsort :: Ord a => [a] -> [a]
+qsort []     = []
+qsort (x:xs) = qsort smaller ++ [x] ++ qsort larger
+  where smaller = [x' | x' <- xs, x' <= x]
+        larger  = [x' | x' <- xs, x' > x]
+
+
+even' :: Int -> Bool
+even' 0 = True
+even' n = odd' (n - 1)
+
+
+odd' :: Int -> Bool
+odd' 0 = False
+odd' n = even' (n - 1)
+
+
+evens :: [a] -> [a]
+evens []     = []
+evens (x:xs) = x : odds xs
+
+
+odds :: [a] -> [a]
+odds []     = []
+odds (_:xs) = evens xs
+
+
+init' :: [a] -> [a]
+init' [_]    = []
+init' (x:xs) = x : init' xs
+
+
 tests = [
   fac 10 == 3628800,
   fac' 10 == 3628800,
@@ -87,7 +125,20 @@ tests = [
   zip' "abc" [1, 2] == [('a', 1), ('b', 2)],
 
   drop' 3 [1, 2, 3, 4, 5] == [4, 5],
-  drop' 10 [1, 2, 3, 4, 5] == []
+  drop' 10 [1, 2, 3, 4, 5] == [],
+
+  fib 7 == 13,
+
+  qsort [4, 1, 3, 5, 2] == [1, 2, 3, 4, 5],
+
+  even 6,
+  not (even 7),
+  odd 7,
+  not (odd 6),
+
+  evens "abcde" == "ace",
+
+  init' [1, 2, 3, 4, 5] == [1, 2, 3, 4]
   ]
 
 main :: IO ()

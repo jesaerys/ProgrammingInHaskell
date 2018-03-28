@@ -142,6 +142,26 @@ msort xs  = merge (msort xs1) (msort xs2)
 
 
 
+-- 9a)
+sum' :: Num a => [a] -> a
+sum' []     = 0
+sum' (x:xs) = x + sum' xs
+
+
+-- 9b)
+take' :: Int -> [a] -> [a]
+take' 0 xs     = []
+take' _ []     = []
+take' n (x:xs) = x : take' (n - 1) xs
+
+
+-- 9c)
+last' :: [a] -> a
+last' [x] = x
+last' (x:xs) = last' xs
+
+
+
 tests = [
   fac 10 == 3628800,
 
@@ -168,7 +188,13 @@ tests = [
 
   halve [1..5] == ([1, 2], [3..5]),
 
-  msort [4, 1, 3, 5, 2] == [1..5]
+  msort [4, 1, 3, 5, 2] == [1..5],
+
+  sum' [1..10] == 55,
+
+  take' 3 [1..5] == [1..3],
+
+  last' [1..5] == 5
   ]
 
 main :: IO ()

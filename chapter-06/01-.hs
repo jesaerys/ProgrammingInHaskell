@@ -91,12 +91,10 @@ and' []     = True
 and' (x:xs) = x && and' xs
 
 
-
 -- 6b)
 concat' :: [[a]] -> [a]
 concat' []       = []
 concat' (xs:xss) = xs ++ concat' xss
-
 
 
 -- 6c)
@@ -105,12 +103,10 @@ replicate' 0 _ = []
 replicate' n x = x : replicate' (n - 1) x
 
 
-
 -- 6d)
 get :: [a] -> Int -> a
 get (x:_) 0 = x
 get xs n | not (null xs)  = get (tail xs) (n - 1)  -- guard against empty list
-
 
 
 -- 6e)
@@ -134,14 +130,14 @@ tests = [
   and' [True, True, True] == True,
   and' [True, False, True] == False,
 
-  concat' [[1, 2, 3], [4, 5], [6, 7, 8]] == [1,2,3,4,5,6,7,8],
+  concat' [[1..3], [4, 5], [6..8]] == [1..8],
 
   replicate' 3 2 == [2, 2, 2],
 
-  get [1, 2, 3, 4, 5] 2 == 3,
+  get [1..5] 2 == 3,
 
-  elem' 3 [1, 2, 3, 4, 5] == True,
-  elem' 9 [1, 2, 3, 4, 5] == False
+  elem' 3 [1..5] == True,
+  elem' 9 [1..5] == False,
   ]
 
 main :: IO ()

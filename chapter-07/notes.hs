@@ -62,6 +62,89 @@ dropWhile' p (x:xs) | p x        = dropWhile' p xs
                     | otherwise  = x : xs
 
 
+{-
+
+`foldr` (fold right) encapsulates the following pattern:
+
+    f []     = v
+    f (x:xs) = x # f xs
+
+where `v` and `#` are parameterizations of the base case value and an operator,
+respectively.
+
+-}
+
+sum' :: Num a => [a] -> a
+sum' []     = 0
+sum' (x:xs) = x + sum' xs
+
+sum'' :: Num a => [a] -> a
+sum'' = foldr (+) 0
+
+product' :: Num a => [a] -> a
+product' []     = 1
+product' (x:xs) = x * product' xs
+
+product'' :: Num a => [a] -> a
+product'' = foldr (*) 1
+
+or' :: [Bool] -> Bool
+or' []     = False
+or' (x:xs) = x || or' xs
+
+or'' :: [Bool] -> Bool
+or'' = foldr (||) False
+
+and' :: [Bool] -> Bool
+and' []     = True
+and' (x:xs) = x && and' xs
+
+and'' :: [Bool] -> Bool
+and'' = foldr (&&) True
+
+
+foldr' :: (a -> b -> b) -> b -> [a] -> b
+foldr' f v []     = v
+foldr' f v (x:xs) = foldr' f (f x v) xs
+
+foldr'' :: (a -> b -> b) -> b -> [a] -> b
+foldr'' f v []     = v
+foldr'' f v (x:xs) = f x (foldr'' f v xs)
+
+
+{-
+
+`foldr` can be thought of as replacing cons with the function and the empty
+list with the value. For example,
+
+    foldr (+) 0 (1 : (2 : (3 : [])))
+
+is the same as,
+
+    1 + (2 + (3 + 0))
+
+-}
+
+
+length' :: [a] -> Int
+length' []     = 0
+length' (x:xs) = 1 + length' xs
+
+length'' :: [a] -> Int
+length'' = foldr (\_ n -> n + 1) 0
+
+
+snoc :: a -> [a] -> [a]
+snoc x xs = xs ++ [x]
+
+reverse' :: [a] -> [a]
+reverse' []     = []
+reverse' (x:xs) = snoc x (reverse' xs)
+
+reverse'' :: [a] -> [a]
+reverse'' = foldr snoc []
+
+
 tests = [
   add 4 5 == add' 4 5,
 
@@ -90,7 +173,37 @@ tests = [
 
   takeWhile' even [2, 4, 6, 7, 8] == [2, 4, 6],
 
-  dropWhile' odd [1, 3, 5, 6, 7] == [6, 7]
+  dropWhile' odd [1, 3, 5, 6, 7] == [6, 7],
+
+  sum' [1..10] == 55,
+  sum'' [1..10] == 55,
+
+  product' [1..10] == 3628800,
+  product'' [1..10] == 3628800,
+
+  or' [True, True, True] == True,
+  or'' [True, True, True] == True,
+  or' [True, False, True] == True,
+  or'' [True, False, True] == True,
+  or' [False, False, False] == False,
+  or'' [False, False, False] == False,
+
+  and' [True, True, True] == True,
+  and'' [True, True, True] == True,
+  and' [True, False, True] == False,
+  and'' [True, False, True] == False,
+  and' [False, False, False] == False,
+  and'' [False, False, False] == False,
+
+  foldr' (+) 0 [1..10] == 55,
+  foldr'' (+) 0 [1..10] == 55,
+
+  length' [1..10] == 10,
+  length'' [1..10] == 10,
+
+  snoc 1 [2] == [2, 1],
+  reverse' [1, 2, 3, 4] == [4, 3, 2, 1],
+  reverse'' [1, 2, 3, 4] == [4, 3, 2, 1]
   ]
 
 main :: IO ()

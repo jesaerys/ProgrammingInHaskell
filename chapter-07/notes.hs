@@ -74,6 +74,7 @@ respectively.
 
 -}
 
+
 sum' :: Num a => [a] -> a
 sum' []     = 0
 sum' (x:xs) = x + sum' xs
@@ -147,6 +148,58 @@ reverse'' :: [a] -> [a]
 reverse'' = foldr snoc []
 
 
+lsum :: Num a => [a] -> a
+lsum = lsum' 0
+  where
+    lsum' v []     = v
+    lsum' v (x:xs) = lsum' (v + x) xs
+
+{-
+Note the left associativity of the algorithm:
+
+lsum [1, 2, 3]
+lsum' 0 [1, 2, 3]
+lsum' (0 + 1) [2, 3]
+lsum' ((0 + 1) + 2) [3]
+lsum' (((0 + 1) + 2) + 3) []
+((0 + 1) + 2) + 3
+
+This recursion pattern is encapsulated by `foldl` (fold left):
+
+    f v []     = v
+    f v (x:xs) = f (v # x) xs
+
+`v` is called the "accumulator".
+
+-}
+
+
+sum''' :: Num a => [a] -> a
+sum''' = foldl (+) 0
+
+product''' :: Num a => [a] -> a
+product''' = foldl (*) 1
+
+or''' :: [Bool] -> Bool
+or''' = foldl (||) False
+
+and''' :: [Bool] -> Bool
+and''' = foldl (&&) True
+
+length''' :: [a] -> Int
+length''' = foldl (\n _ -> n + 1) 0
+
+reverse''' :: [a] -> [a]
+reverse''' = foldl (\xs x -> x : xs) []
+
+
+foldl' :: (b -> a -> b) -> b -> [a] -> b
+foldl' f v []     = v
+foldl' f v (x:xs) = foldl' f (f v x) xs
+
+
+
+
 tests = [
   add 4 5 == add' 4 5,
 
@@ -198,14 +251,31 @@ tests = [
   and'' [False, False, False] == False,
 
   foldr' (+) 0 [1..10] == 55,
-  foldr'' (+) 0 [1..10] == 55,
 
   length' [1..10] == 10,
   length'' [1..10] == 10,
 
   snoc 1 [2] == [2, 1],
   reverse' [1, 2, 3, 4] == [4, 3, 2, 1],
-  reverse'' [1, 2, 3, 4] == [4, 3, 2, 1]
+  reverse'' [1, 2, 3, 4] == [4, 3, 2, 1],
+
+  sum''' [1..10] == 55,
+
+  product''' [1..10] == 3628800,
+
+  or''' [True, True, True] == True,
+  or''' [True, False, True] == True,
+  or''' [False, False, False] == False,
+
+  and''' [True, True, True] == True,
+  and''' [True, False, True] == False,
+  and''' [False, False, False] == False,
+
+  length''' [1..10] == 10,
+
+  reverse''' [1, 2, 3, 4] == [4, 3, 2, 1],
+
+  foldl' (+) 0 [1..10] == 55
   ]
 
 main :: IO ()

@@ -105,14 +105,16 @@ and'' = foldr (&&) True
 
 foldr' :: (a -> b -> b) -> b -> [a] -> b
 foldr' f v []     = v
-foldr' f v (x:xs) = foldr' f (f x v) xs
-
-foldr'' :: (a -> b -> b) -> b -> [a] -> b
-foldr'' f v []     = v
-foldr'' f v (x:xs) = f x (foldr'' f v xs)
-
+foldr' f v (x:xs) = f x (foldr' f v xs)
 
 {-
+Note the right associativity of the algorithm:
+
+foldr (+) 0 [1, 2, 3]
+1 + (foldr (+) 0 [2, 3])
+1 + (2 + (foldr (+) 0 [3]))
+1 + (2 + (3 + (foldr (+) 0 [])))
+1 + (2 + (3 + 0))
 
 `foldr` can be thought of as replacing cons with the function and the empty
 list with the value. For example,

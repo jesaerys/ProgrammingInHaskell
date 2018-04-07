@@ -198,6 +198,22 @@ foldl' f v []     = v
 foldl' f v (x:xs) = foldl' f (f v x) xs
 
 
+comp :: (b -> c) -> (a -> b) -> (a -> c)
+comp f g = \x -> f (g x)
+
+
+odd' :: Int -> Bool
+odd' = not . even
+
+twice' :: (a -> a) -> a -> a
+twice' f = f . f
+
+sumsqreven' :: [Int] -> Int
+sumsqreven' = sum . map (^2) . filter even
+
+
+compose :: [a -> a] -> (a -> a)
+compose = foldr (.) id
 
 
 tests = [
@@ -275,7 +291,16 @@ tests = [
 
   reverse''' [1, 2, 3, 4] == [4, 3, 2, 1],
 
-  foldl' (+) 0 [1..10] == 55
+  foldl' (+) 0 [1..10] == 55,
+
+  comp (*2) (+3) 4 == 14,
+
+  odd' 6 == False,
+  odd' 7 == True,
+  twice' (*2) 3 == 12,
+  sumsqreven' [1..10] == 220,
+
+  compose [(*2), (+3)] 4 == 14
   ]
 
 main :: IO ()

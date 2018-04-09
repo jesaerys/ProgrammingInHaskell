@@ -14,10 +14,6 @@ rmdups :: Eq a => [a] -> [a]
 rmdups []     = []
 rmdups (x:xs) = x : rmdups (filter (/= x) xs)
 
-rmdups' :: Eq a => [a] -> [a]
-rmdups' [] = []
-rmdups' (x:xs) = x : filter (/= x) (rmdups' xs)
-
 result :: Ord a => [a] -> [(Int, a)]
 result vs = sort [(count v vs, v) | v <- rmdups vs]
 
@@ -52,7 +48,6 @@ winner' bs = case rank (rmempty bs) of
 tests = [
   count "Red" votes == 2,
   rmdups votes == ["Red", "Blue", "Green"],
-  rmdups' votes == ["Red", "Blue", "Green"],
   result votes == [(1, "Green"), (2, "Red"), (3, "Blue")],
   winner votes == "Blue",
 

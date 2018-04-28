@@ -241,9 +241,7 @@ tests = [
        isTaut p2,
   not (isTaut p3),
        isTaut p4,
-       isTaut2 p4,
-
-  True
+       isTaut2 p4
   ]
 
 main :: IO ()

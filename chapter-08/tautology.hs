@@ -144,7 +144,7 @@ substs p = [zip vs bs | bs <- bss]
   where vs = rmdups (vars p)
         bss = bools (length vs)
 
--- Books:
+-- Book's:
 substs2 :: Prop -> [Subst]
 substs2 p = map (zip vs) (bools (length vs))
   where vs = rmdups (vars p)
@@ -154,7 +154,7 @@ substs2 p = map (zip vs) (bools (length vs))
 isTaut :: Prop -> Bool
 isTaut p = and (map (\s -> eval s p) (substs p))
 
--- Books:
+-- Book's:
 isTaut2 :: Prop -> Bool
 isTaut2 p = and [eval s p | s <- substs p]
 

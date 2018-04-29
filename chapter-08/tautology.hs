@@ -130,7 +130,7 @@ bools3 n = [(b:bs) | b <- [False, True], bs <- bools3 (n-1)]
 bools4 :: Int -> [[Bool]]
 bools4 0 = [[]]
 bools4 n = map (False:) bss ++ map (True:) bss
-  where bss = bools (n-1)
+  where bss = bools4 (n-1)
 
 
 rmdups :: Eq a => [a] -> [a]

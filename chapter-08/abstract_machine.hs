@@ -36,8 +36,8 @@ exec [EVAL (Val 3), EVAL (Val 4)] 2
 eval (Val 3) [ADD 2, EVAL (Val 4)]
 exec [ADD 2, EVAL (Val 4)] 3
 exec [EVAL (Val 4)] 2+3
-eval (Val 4) [Add 5]
-exec [Add 5] 4
+eval (Val 4) [ADD 5]
+exec [ADD 5] 4
 exec [] 5+4
 9
 -}

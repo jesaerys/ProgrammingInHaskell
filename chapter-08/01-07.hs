@@ -157,9 +157,7 @@ tests = [
 
   (toList' ([] :: [Int])) == (toList' ([] :: [Int])),
   (toList' [1, 2, 3]) == (toList' [1, 2, 3]),
-  not ((toList' [1, 2, 3]) == (toList' [1, 2])),
-
-  True
+  not ((toList' [1, 2, 3]) == (toList' [1, 2]))
   ]
 
 main :: IO ()

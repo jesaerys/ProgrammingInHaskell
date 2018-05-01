@@ -1,12 +1,33 @@
+{- To run,
+
+```
+$ ghc -O2 countdown.hs
+$ # Or with stack,
+$ stack ghc -- -O2 countdown.hs
+$ time ./countdown > solutions.txt
+
+real	0m5.561s
+user	0m5.473s
+sys	0m0.073s
+$ tr ',' '\n' <solutions.txt | head -n 3
+[3*((7*(50-10))-25)
+((7*(50-10))-25)*3
+3*(((50-10)*7)-25)
+```
+
+-}
 module Main where
 
 
 import Control.Exception (assert)
 
 
-{- Given [1, 3, 7, 10, 25, 50], Target 765, one solution (1+50)*(25-10) -}
+main :: IO ()
+main = print (solutions [1, 3, 7, 10, 25, 50] 765)
+
 
 data Op = Add | Sub | Mul | Div
+  deriving Eq
 
 instance Show Op where
   show Add = "+"
@@ -29,6 +50,7 @@ apply Div x y = x `div` y
 
 
 data Expr = Val Int | App Op Expr Expr
+  deriving Eq
 
 instance Show Expr where
   show (Val n)     = show n
@@ -70,6 +92,24 @@ split [] = []
 split [_] = []
 split (x:xs) = ([x], xs) : [(x:ls, rs) | (ls, rs) <- split xs]
 
+exprs :: [Int] -> [Expr]
+exprs []  = []
+exprs [n] = [Val n]
+exprs ns  = [e | (ls, rs) <- split ns,
+                 l        <- exprs ls,
+                 r        <- exprs rs,
+                 e        <- combine l r]
+
+combine :: Expr -> Expr -> [Expr]
+combine l r = [App o l r | o <- ops]
+
+ops :: [Op]
+ops = [Add, Sub, Mul, Div]
+
+solutions :: [Int] -> Int -> [Expr]
+solutions ns n = [e | ns' <- choices ns, e <- exprs ns', eval e == [n]]
+
+
 
 tests = [
   valid Add 1 1,
@@ -100,8 +140,12 @@ tests = [
 
   split [1, 2, 3, 4] == [([1], [2,3,4]), ([1,2], [3,4]), ([1,2,3], [4])],
 
+  combine (Val 1) (Val 2) == [App Add (Val 1) (Val 2), App Sub (Val 1) (Val 2), App Mul (Val 1) (Val 2), App Div (Val 1) (Val 2)],
+  exprs [1, 2] == [App Add (Val 1) (Val 2), App Sub (Val 1) (Val 2), App Mul (Val 1) (Val 2), App Div (Val 1) (Val 2)],
+  solutions [1, 2] 2 == [Val 2, App Mul (Val 1) (Val 2), App Mul (Val 2) (Val 1), App Div (Val 2) (Val 1)],
+
   True
   ]
 
-main :: IO ()
-main = assert (and tests) putStrLn "OK"
+test :: IO ()
+test = assert (and tests) putStrLn "OK"

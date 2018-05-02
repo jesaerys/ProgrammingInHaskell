@@ -15,6 +15,19 @@ $ tr ',' '\n' <solutions.txt | head -n 3
 3*(((50-10)*7)-25)
 ```
 
+The above result was for `solutions`. The result for `solutions'` was,
+
+```
+$ time ./countdown > solutions2.txt
+
+real	0m0.381s
+user	0m0.352s
+sys	0m0.010s
+$ diff solutions.txt solutions2.txt
+```
+
+This is about 15x faster.
+
 -}
 module Main where
 
@@ -23,7 +36,7 @@ import Control.Exception (assert)
 
 
 main :: IO ()
-main = print (solutions [1, 3, 7, 10, 25, 50] 765)
+main = print (solutions' [1, 3, 7, 10, 25, 50] 765)
 
 
 data Op = Add | Sub | Mul | Div
@@ -110,6 +123,23 @@ solutions :: [Int] -> Int -> [Expr]
 solutions ns n = [e | ns' <- choices ns, e <- exprs ns', eval e == [n]]
 
 
+type Result = (Expr, Int)
+
+results :: [Int] -> [Result]
+results []  = []
+results [n] = [(Val n, n) | n > 0]
+results ns  = [res | (ls, rs) <- split ns,
+                     lx       <- results ls,
+                     ry       <- results rs,
+                     res      <- combine' lx ry]
+
+combine' :: Result -> Result -> [Result]
+combine' (l, x) (r, y) = [(App o l r, apply o x y) | o <- ops, valid o x y]
+
+solutions' :: [Int] -> Int -> [Expr]
+solutions' ns n = [e | ns' <- choices ns, (e, m) <- results ns', m == n]
+
+
 
 tests = [
   valid Add 1 1,
@@ -143,6 +173,10 @@ tests = [
   combine (Val 1) (Val 2) == [App Add (Val 1) (Val 2), App Sub (Val 1) (Val 2), App Mul (Val 1) (Val 2), App Div (Val 1) (Val 2)],
   exprs [1, 2] == [App Add (Val 1) (Val 2), App Sub (Val 1) (Val 2), App Mul (Val 1) (Val 2), App Div (Val 1) (Val 2)],
   solutions [1, 2] 2 == [Val 2, App Mul (Val 1) (Val 2), App Mul (Val 2) (Val 1), App Div (Val 2) (Val 1)],
+
+  combine' (Val 1, 1) (Val 2, 2) == [(App Add (Val 1) (Val 2), 3), (App Mul (Val 1) (Val 2), 2)],
+  results [1, 2] == [(App Add (Val 1) (Val 2), 3), (App Mul (Val 1) (Val 2), 2)],
+  solutions' [1, 2] 2 == [Val 2, App Mul (Val 1) (Val 2), App Mul (Val 2) (Val 1), App Div (Val 2) (Val 1)],
 
   True
   ]
